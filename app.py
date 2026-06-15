@@ -1,3 +1,24 @@
+Tôi sẽ giúp bạn **thay thế nội dung file `app.py`** một cách dễ dàng.
+
+## Cách thay thế file `app.py`:
+
+### Cách 1: Copy toàn bộ code mới (Nhanh nhất)
+
+1. **Mở file `app.py`** hiện tại của bạn trong VSCode (hoặc bất kỳ editor nào)
+
+2. **Bôi đen toàn bộ nội dung** cũ (Ctrl+A)
+
+3. **Xóa hết** (Delete)
+
+4. **Copy toàn bộ code mới** bên dưới và **paste vào** (Ctrl+V)
+
+5. **Lưu file** (Ctrl+S)
+
+---
+
+### Đây là toàn bộ file `app.py` hoàn chỉnh (đã sửa lỗi):
+
+```python
 """
 app.py — Dashboard Streamlit AIDEOM-VN
 ========================================
@@ -38,13 +59,8 @@ st.set_page_config(
 )
 
 # ─── Hàm chuyển đổi đơn vị ────────────────────────────────────
-# Tỷ giá tham khảo: 1 USD = 25,000 VND
-# 1 nghìn tỷ VND = 1,000,000,000,000 VND = 40,000,000 USD = 0.04 tỷ USD
-# Vậy để đổi từ nghìn tỷ VND sang tỷ USD: chia cho 25
-USD_VND_RATE = 25000  # 1 USD = 25,000 VND
-
 def to_usd(vnd_trillion):
-    """Chuyển đổi từ nghìn tỷ VND sang tỷ USD"""
+    """Chuyển đổi từ nghìn tỷ VND sang tỷ USD (1 USD = 25,000 VND)"""
     return vnd_trillion / 25
 
 # ─── Màu kịch bản ────────────────────────────────────────────
@@ -86,7 +102,7 @@ def render_sidebar() -> dict:
             "Kịch bản chính sách",
             options=list(SCENARIOS.keys()),
             format_func=lambda s: f"{s}: {SCENARIOS[s].name_vi}",
-            index=4,  # S5 mặc định
+            index=4,
         )
 
         st.subheader("Tham số Mô hình")
@@ -126,7 +142,6 @@ def tab_overview(outputs, params: dict) -> None:
     st.header("🇻🇳 Tổng quan AIDEOM-VN")
     st.caption("Mô hình ra Quyết định Phát triển Kinh tế Việt Nam trong Kỷ nguyên AI")
 
-    # ── Metric cards ─────────────────────────────────────────
     m1 = outputs.m1
     m3 = outputs.m3
     m4 = outputs.m4
@@ -153,7 +168,6 @@ def tab_overview(outputs, params: dict) -> None:
 
     st.divider()
 
-    # ── Bản đồ kiến trúc module ───────────────────────────────
     col_arch, col_kpi = st.columns([1, 1])
 
     with col_arch:
@@ -194,7 +208,6 @@ def tab_overview(outputs, params: dict) -> None:
         ])
         st.dataframe(kpi_df, hide_index=True, use_container_width=True)
 
-    # ── Thời gian chạy pipeline ───────────────────────────────
     st.divider()
     st.subheader("Hiệu suất Pipeline")
     rt = outputs.run_time
@@ -219,11 +232,9 @@ def tab_forecast(outputs, params: dict) -> None:
     m1 = outputs.m1
     sid = params["scenario"]
 
-    # ── GDP Fan Chart (tất cả kịch bản) ──────────────────────
     st.subheader("GDP dự báo theo 5 Kịch bản Chính sách")
 
     fig = go.Figure()
-    # Lịch sử
     from src.data_loader import load_macro
     df_hist = load_macro()
     fig.add_trace(go.Scatter(
@@ -241,8 +252,7 @@ def tab_forecast(outputs, params: dict) -> None:
             mode="lines", name=name,
             line=dict(color=c, width=width, dash=dash),
         ))
-    fig.add_vline(x=2030, line_dash="dash", line_color="red",
-                  annotation_text="Mục tiêu 2030")
+    fig.add_vline(x=2030, line_dash="dash", line_color="red", annotation_text="Mục tiêu 2030")
     fig.update_layout(
         xaxis_title="Năm", yaxis_title="GDP (tỷ USD)",
         height=420, legend=dict(orientation="h", y=-0.2),
@@ -250,7 +260,6 @@ def tab_forecast(outputs, params: dict) -> None:
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    # ── Phân rã tăng trưởng ───────────────────────────────────
     col1, col2 = st.columns(2)
 
     with col1:
@@ -301,11 +310,8 @@ def tab_forecast(outputs, params: dict) -> None:
         fig3.update_yaxes(title_text="DN Công nghệ số (nghìn)", secondary_y=True)
         st.plotly_chart(fig3, use_container_width=True)
 
-    # ── Bảng so sánh kịch bản ────────────────────────────────
     st.subheader("Bảng so sánh 5 Kịch bản đến 2030")
     cmp_df = m1["comparison_df"].copy()
-    # Thêm cột GDP 2030 (tỷ USD)
-    cmp_df["gdp_2030_usd"] = to_usd(cmp_df["gdp_2030_tn_vnd"])
     cmp_df.columns = [c.replace("_", " ").title() for c in cmp_df.columns]
     st.dataframe(
         cmp_df.style.background_gradient(
@@ -329,41 +335,34 @@ def tab_allocation(outputs, params: dict) -> None:
 
     col_left, col_right = st.columns(2)
 
-    # ── TOPSIS xếp hạng vùng ─────────────────────────────────
     with col_left:
         st.subheader("Xếp hạng Sẵn sàng AI — 6 Vùng (TOPSIS)")
         r_region = m2["region_result"]
         rank_df = r_region.ranking_expert.copy()
-
         fig = px.bar(
             rank_df, x="topsis_score", y="name",
             orientation="h", color="topsis_score",
             color_continuous_scale="RdYlGn",
             labels={"topsis_score": "Điểm C*", "name": ""},
         )
-        fig.update_layout(height=320, showlegend=False,
-                          yaxis=dict(autorange="reversed"))
+        fig.update_layout(height=320, showlegend=False, yaxis=dict(autorange="reversed"))
         st.plotly_chart(fig, use_container_width=True)
 
-    # ── TOPSIS xếp hạng ngành ─────────────────────────────────
     with col_right:
         st.subheader("Xếp hạng Sẵn sàng AI — 10 Ngành (TOPSIS)")
         r_sector = m2["sector_result"]
         sec_df = r_sector.ranking_expert.copy()
-
         fig2 = px.bar(
             sec_df, x="topsis_score", y="name",
             orientation="h", color="topsis_score",
             color_continuous_scale="Blues",
             labels={"topsis_score": "Điểm C*", "name": ""},
         )
-        fig2.update_layout(height=400, showlegend=False,
-                           yaxis=dict(autorange="reversed"))
+        fig2.update_layout(height=400, showlegend=False, yaxis=dict(autorange="reversed"))
         st.plotly_chart(fig2, use_container_width=True)
 
     st.divider()
 
-    # ── Phân bổ tối ưu ───────────────────────────────────────
     st.subheader(f"Ma trận Phân bổ Tối ưu [{sid}]")
     result = m3["results_by_scenario"][sid]
     alloc_mat = result.allocation_matrix.copy()
@@ -391,16 +390,13 @@ def tab_allocation(outputs, params: dict) -> None:
     with col_b:
         st.markdown("**Chi phí Công bằng Vùng miền**")
         eq_cost = m3["equity_cost"]
-        r_wo = m3.get("result_no_equity")
         z_with = result.objective_value
         st.metric("Z* (có equity)", f"{z_with:,.0f} tỷ VND")
         st.metric("Chi phí equity", f"{eq_cost:,.0f} tỷ VND",
                   delta=f"-{eq_cost/max(z_with+eq_cost,1)*100:.1f}%",
                   delta_color="inverse")
-        st.caption("Chi phí kinh tế (GDP gain bị hi sinh) để đảm bảo "
-                   "phát triển đồng đều giữa các vùng.")
+        st.caption("Chi phí kinh tế (GDP gain bị hi sinh) để đảm bảo phát triển đồng đều giữa các vùng.")
 
-    # ── Phân tích độ nhạy ngân sách ──────────────────────────
     st.subheader("Phân tích Độ nhạy Ngân sách")
     sens_df = m3["sensitivity_df"]
     fig_sens = make_subplots(rows=1, cols=2,
@@ -432,7 +428,6 @@ def tab_scenarios(outputs, params: dict) -> None:
     m3 = outputs.m3
     m4 = outputs.m4
 
-    # ── Bảng tổng hợp KPI ────────────────────────────────────
     st.subheader("Bảng KPI Tổng hợp 2030")
     cmp_m1 = m1["comparison_df"]
     cmp_m3 = pd.DataFrame([
@@ -442,49 +437,41 @@ def tab_scenarios(outputs, params: dict) -> None:
     ])
     kpi_table = cmp_m1.merge(cmp_m3, on="scenario_id")
     kpi_table["netjob_k"] = m4["result_optimal"].total_net
-    # Thêm cột GDP 2030 (tỷ USD)
-    kpi_table["gdp_2030_usd"] = to_usd(kpi_table["gdp_2030_tn_vnd"])
 
     display_cols = ["scenario_id","scenario_name_vi","avg_growth_pct",
-                    "gdp_2030_usd","z_star_gdp_gain","gdp_gain_vs_S1_pct"]
+                    "gdp_2030_tn_vnd","z_star_gdp_gain","gdp_gain_vs_S1_pct"]
     avail = [c for c in display_cols if c in kpi_table.columns]
-    # Đổi tên cột hiển thị
-    display_names = {
-        "scenario_id": "Kịch bản",
-        "scenario_name_vi": "Tên",
-        "avg_growth_pct": "Tăng trưởng (%/năm)",
-        "gdp_2030_usd": "GDP 2030 (tỷ USD)",
-        "z_star_gdp_gain": "Z* LP (tỷ VND)",
-        "gdp_gain_vs_S1_pct": "Chênh lệch vs S1 (%)",
-    }
     st.dataframe(
-        kpi_table[avail].rename(columns=display_names).style.background_gradient(
-            subset=["Tăng trưởng (%/năm)"] if "Tăng trưởng (%/năm)" in display_names.values() else [],
+        kpi_table[avail].style.background_gradient(
+            subset=["avg_growth_pct"] if "avg_growth_pct" in avail else [],
             cmap="RdYlGn"
         ).format(precision=1),
         hide_index=True, use_container_width=True,
     )
 
-    # ── Radar chart ───────────────────────────────────────────
     st.subheader("Radar Chart — Phân tích Đánh đổi")
     metrics = ["GDP 2030", "Kinh tế số", "AI capacity", "Nhân lực", "Z* LP"]
     fig_radar = go.Figure()
 
     for sid in ["S1","S2","S3","S4","S5"]:
         row = m1["comparison_df"][m1["comparison_df"]["scenario_id"] == sid].iloc[0]
-        gdp_2030_val = to_usd(row["gdp_2030_tn_vnd"])  # Đã chuyển sang tỷ USD
+        gdp_col = [c for c in row.index if "gdp_" in c and "tn_vnd" in c]
+        gdp_2030_val = row[gdp_col[0]] if gdp_col else 0
 
-        dig_2030 = row["digital_2030_pct"]
-        ai_2030  = row["ai_firms_2030_k"]
-        hc_2030  = row["human_cap_2030_pct"]
-        z_val    = m3["results_by_scenario"][sid].objective_value / 1000  # nghìn tỷ
+        dig_col = [c for c in row.index if "digital_" in c and "pct" in c]
+        ai_col  = [c for c in row.index if "ai_firms" in c]
+        hc_col  = [c for c in row.index if "human_cap" in c]
 
-        # Chuẩn hóa về [0,1] với ngưỡng mới (tỷ USD)
-        vals_raw = [gdp_2030_val / 800, dig_2030 / 40,
+        dig_2030 = row[dig_col[0]] if dig_col else 0
+        ai_2030  = row[ai_col[0]]  if ai_col  else 0
+        hc_2030  = row[hc_col[0]]  if hc_col  else 0
+        z_val    = m3["results_by_scenario"][sid].objective_value / 1000
+
+        vals_raw = [gdp_2030_val / 20000, dig_2030 / 40,
                     ai_2030 / 120,        hc_2030 / 50,
                     z_val / 100]
         vals = [max(0, min(1, v)) for v in vals_raw]
-        vals += [vals[0]]  # đóng vòng
+        vals += [vals[0]]
 
         fig_radar.add_trace(go.Scatterpolar(
             r=vals, theta=metrics + [metrics[0]],
@@ -499,7 +486,6 @@ def tab_scenarios(outputs, params: dict) -> None:
     )
     st.plotly_chart(fig_radar, use_container_width=True)
 
-    # ── Timeline phân bổ vốn ─────────────────────────────────
     st.subheader("Phân bổ Vốn theo Kịch bản")
     alloc_data = []
     for sid, scen in SCENARIOS.items():
@@ -521,9 +507,7 @@ def tab_scenarios(outputs, params: dict) -> None:
             "Nhân lực": "#10B981",
         },
     )
-    fig_alloc.update_layout(height=350,
-                             xaxis_tickangle=-20,
-                             legend=dict(orientation="h", y=-0.25))
+    fig_alloc.update_layout(height=350, xaxis_tickangle=-20, legend=dict(orientation="h", y=-0.25))
     st.plotly_chart(fig_alloc, use_container_width=True)
 
 
@@ -543,7 +527,6 @@ def tab_risk(outputs, params: dict) -> None:
     p = risk_res.percentiles
     p_usd = {k: to_usd(v) for k, v in p.items()}
 
-    # ── Metric row ────────────────────────────────────────────
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("P50 GDP 2030", f"{p_usd[50]:,.0f}", "tỷ USD")
     c2.metric("VaR 95%",      f"{to_usd(risk_res.var_95):,.0f}",  "tỷ USD (worst 5%)")
@@ -554,7 +537,6 @@ def tab_risk(outputs, params: dict) -> None:
     st.divider()
     col_dist, col_sens = st.columns(2)
 
-    # ── Phân phối GDP ─────────────────────────────────────────
     with col_dist:
         st.subheader("Phân phối GDP 2030")
         fig_hist = go.Figure()
@@ -572,14 +554,9 @@ def tab_risk(outputs, params: dict) -> None:
                                line_dash="dash",
                                annotation_text=label,
                                annotation_position="top")
-        fig_hist.update_layout(
-            height=320,
-            xaxis_title="GDP 2030 (tỷ USD)",
-            yaxis_title="Tần suất",
-        )
+        fig_hist.update_layout(height=320, xaxis_title="GDP 2030 (tỷ USD)", yaxis_title="Tần suất")
         st.plotly_chart(fig_hist, use_container_width=True)
 
-    # ── Sensitivity ───────────────────────────────────────────
     with col_sens:
         st.subheader("Đóng góp Phương sai — Nguồn Rủi ro")
         sens_df = risk_res.sensitivity
@@ -596,12 +573,55 @@ def tab_risk(outputs, params: dict) -> None:
                                xaxis_title="Đóng góp Phương sai (%)")
         st.plotly_chart(fig_sens, use_container_width=True)
 
-    # ── Stress Test ───────────────────────────────────────────
     st.subheader("Stress Test — Kịch bản Cực đoan")
     stress = risk_res.stress_results
     if stress:
         from src.m5_risk import RiskAnalyzer
-        stress_rows = [
-            {"Kịch bản cực đoan": RiskAnalyzer.STRESS_SCENARIOS[k]["label"],
-             "GDP trung vị 2030": f"{to_usd(v):,.0f} tỷ USD",
-             "vs P50 cơ sở": f
+        stress_rows = []
+        for k, v in stress.items():
+            stress_rows.append({
+                "Kịch bản cực đoan": RiskAnalyzer.STRESS_SCENARIOS[k]["label"],
+                "GDP trung vị 2030": f"{to_usd(v):,.0f} tỷ USD",
+                "vs P50 cơ sở": f"{(to_usd(v)/p_usd[50]-1)*100:+.1f}%",
+                "Đánh giá": "✅ An toàn" if v >= p[50]*0.92 else
+                            "⚠️ Chú ý" if v >= p[50]*0.85 else "❌ Rủi ro cao"
+            })
+        stress_df = pd.DataFrame(stress_rows)
+        st.dataframe(stress_df, hide_index=True, use_container_width=True)
+
+    st.subheader("So sánh Rủi ro qua 5 Kịch bản")
+    risk_cmp = m5["risk_comparison"]
+    fig_cmp = make_subplots(rows=1, cols=2,
+                             subplot_titles=("Khoảng tin cậy P5–P95 (tỷ USD)",
+                                             "Xác suất hụt mục tiêu (%)"))
+    for _, row in risk_cmp.iterrows():
+        c = SCENARIO_COLORS.get(row["scenario_id"], "gray")
+        xi = list(risk_cmp["scenario_name"]).index(row["scenario_name"])
+        fig_cmp.add_trace(go.Scatter(
+            x=[xi, xi], y=[to_usd(row["p5_gdp_tn"]), to_usd(row["p95_gdp_tn"])],
+            mode="lines", line=dict(color=c, width=8), opacity=0.35,
+            showlegend=False,
+        ), row=1, col=1)
+        fig_cmp.add_trace(go.Scatter(
+            x=[xi], y=[to_usd(row["p50_gdp_tn"])],
+            mode="markers", marker=dict(color=c, size=12, symbol="circle"),
+            name=row["scenario_id"], showlegend=True,
+        ), row=1, col=1)
+
+    fig_cmp.add_trace(go.Bar(
+        x=risk_cmp["scenario_name"], y=risk_cmp["prob_miss_pct"],
+        marker_color=[SCENARIO_COLORS.get(s, "gray")
+                      for s in risk_cmp["scenario_id"]],
+        showlegend=False,
+    ), row=1, col=2)
+    fig_cmp.add_hline(y=20, line_dash="dash", line_color="red", row=1, col=2)
+    fig_cmp.update_layout(height=380, legend=dict(orientation="h", y=-0.2))
+    st.plotly_chart(fig_cmp, use_container_width=True)
+
+
+# ═══════════════════════════════════════════════════════════════
+# Tab 6: Cảnh báo Chính sách (M6)
+# ═══════════════════════════════════════════════════════════════
+
+def tab_alerts(outputs, params: dict) -> None:
+    """Tab Cảnh báo — Policy Al
