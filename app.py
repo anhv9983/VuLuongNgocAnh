@@ -1,4 +1,13 @@
-"""
+# Tỷ giá USD/VND (có thể cập nhật theo thời gian thực)
+USD_VND_RATE = 25000  # 1 USD = 25,000 VND
+
+def to_usd(vnd_trillion):
+    """Chuyển đổi từ nghìn tỷ VND sang tỷ USD"""
+    return vnd_trillion / 25  # Vì 1 nghìn tỷ VND = 40 triệu USD? Tính lại:
+    # 1 nghìn tỷ VND = 1,000,000,000,000 VND
+    # Chia cho 25,000 = 40,000,000 USD = 40 triệu USD
+    # Vậy để ra tỷ USD: (vnd_trillion * 1e12) / (25e3) / 1e9 = vnd_trillion / 25
+    # Đúng rồi!"""
 app.py — Dashboard Streamlit AIDEOM-VN
 ========================================
 Giao diện tương tác 5 tab hỗ trợ ra quyết định chính sách:
