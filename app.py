@@ -625,3 +625,4 @@ def tab_risk(outputs, params: dict) -> None:
 
 def tab_alerts(outputs, params: dict) -> None:
     """Tab Cảnh báo — Policy Al
+"""
