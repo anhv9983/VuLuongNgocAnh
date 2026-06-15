@@ -1,24 +1,3 @@
-Tôi sẽ giúp bạn **thay thế nội dung file `app.py`** một cách dễ dàng.
-
-## Cách thay thế file `app.py`:
-
-### Cách 1: Copy toàn bộ code mới (Nhanh nhất)
-
-1. **Mở file `app.py`** hiện tại của bạn trong VSCode (hoặc bất kỳ editor nào)
-
-2. **Bôi đen toàn bộ nội dung** cũ (Ctrl+A)
-
-3. **Xóa hết** (Delete)
-
-4. **Copy toàn bộ code mới** bên dưới và **paste vào** (Ctrl+V)
-
-5. **Lưu file** (Ctrl+S)
-
----
-
-### Đây là toàn bộ file `app.py` hoàn chỉnh (đã sửa lỗi):
-
-```python
 """
 app.py — Dashboard Streamlit AIDEOM-VN
 ========================================
